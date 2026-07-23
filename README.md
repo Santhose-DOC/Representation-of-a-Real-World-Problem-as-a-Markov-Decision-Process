@@ -254,7 +254,9 @@ print("Discount Factor (γ):", gamma)
 ## Output
 ![alt text](image-2.png)
 
-![alt text](image-1.png)
+<img width="787" height="1199" alt="image" src="https://github.com/user-attachments/assets/21e1a701-f200-41e7-a6c6-bbbf38a1948d" />
+
+
 ---
 
 ## Result
