@@ -3,11 +3,7 @@
 
 ## Aim
 
-Write your aim here.
-
-Example:
-
-> To identify a real-world sequential decision-making problem and represent it formally as a Markov Decision Process by defining its states, actions, rewards, transitions, and Python representation.
+To identify a real-world autonomous robot navigation decision-making problem of  and represent it formally as a Markov Decision Process by defining its states, actions, rewards, transitions, and Python representation.
 
 ---
 
@@ -15,10 +11,7 @@ Example:
 
 ### Problem Description
 
-Write your answer here.
-
-Describe the real-world application that you selected.
-
+Consider an autonomous delivery robot operating in a warehouse. The robot must navigate from the starting location to the delivery destination while avoiding obstacles and minimizing travel time. At each step, the robot decides which direction to move. Due to uncertainty, the robot may occasionally slip or encounter obstacles. The objective is to maximize the total reward by reaching the destination safely.
 
 ---
 
@@ -44,18 +37,16 @@ Where:
 
 ## State Space
 
-Write your answer here.
-
-The state space should list all possible situations in which the agent can exist.
+The possible state for autonoumous robot are
 
 Example format:
 
 ```text
 S = {
-    State 1,
-    State 2,
-    State 3,
-    ...
+    Start,
+    Empty cell,
+    Obstacle,
+    Goal
 }
 ```
 
@@ -65,9 +56,7 @@ S = {
 
 ## Sample State
 
-Write your answer here.
-
-A sample state is one specific example from the state space.
+Cuurent state = Empty cell
 
 
 
@@ -77,16 +66,16 @@ A sample state is one specific example from the state space.
 
 Write your answer here.
 
-The action space should list all possible actions available to the agent.
+The all possible actions that are available to the agent(autonomous robot).
 
 Example format:
 
 ```text
 A = {
-    Action 1,
-    Action 2,
-    Action 3,
-    ...
+    Move Right,
+    Move Left,
+    Move Up,
+    Move Down
 }
 ```
 
@@ -95,17 +84,12 @@ A = {
 
 ## Sample Action
 
-Write your answer here.
-
-A sample action is one action selected from the action space.
-
-
+Current Action = Move Right
 
 ---
 
 ## Transition Probability
 
-Write your answer here.
 
 The transition probability explains how the environment moves from one state to another after an action is taken.
 
@@ -115,16 +99,17 @@ $$
 P(s' \mid s,a)
 $$
 
-This means:
+Example:
 
-> Probability of reaching next state $s'$ after taking action $a$ in current state $s$.
+0.8 → Robot successfully moves in the intended direction.
+0.1 → Robot slips to the left.
+0.1 → Robot slips to the right.
 
 
 ---
 
 ## Reward Function
 
-Write your answer here.
 
 The reward function defines the feedback received by the agent after taking an action.
 
@@ -134,22 +119,18 @@ $$
 R(s,a,s')
 $$
 
+Example:
++100 - Reaching the goal
+-50  - Hit an obstacle
+-1   - Moved to the empty cell
+
 
 
 ---
 
 ## Graphical Representation
 
-Write your answer here.
-
-Draw the MDP graph.
-
-The graph should include:
-
-1. States as nodes.
-2. Actions as arrows.
-3. Rewards on transitions.
-4. Transition probabilities if applicable.
+![alt text](image.png)
 
 
 ---
@@ -162,23 +143,242 @@ Use Python dictionaries to represent the MDP.
 
 
 ```python
-# MDP Representation using Python
-# print("Name:       ")
-# print("Register Number:     ")
+# ---------------------------------------------
+# Representation of a Real-World Problem as MDP
+# Warehouse Robot Navigation
+# ---------------------------------------------
+
+print("Name: Santhose Arockiaraj")
+print("Register Number: 212224230248")
+
+# State Mapping
+states = {
+    0: "Start",
+    1: "Empty Cell",
+    2: "Obstacle",
+    3: "Goal"
+}
+
+# Action Mapping
+actions = {
+    0: "Up",
+    1: "Down",
+    2: "Left",
+    3: "Right"
+}
+
+# Discount Factor
+gamma = 0.9
+
+# MDP Transition Dictionary
+# Format:
+# P[state][action] = [(probability, next_state, reward, terminated)]
+
+P = {
+
+    # ---------------- State 0 : Start ----------------
+    0: {
+        0: [(1.0, 0, -1, False)],   # Up
+        1: [(1.0, 1, -1, False)],   # Down
+        2: [(1.0, 0, -1, False)],   # Left
+        3: [(1.0, 1, -1, False)]    # Right
+    },
+
+    # ---------------- State 1 : Empty Cell ----------------
+    1: {
+        0: [(1.0, 2, -50, False)],  # Up
+        1: [(1.0, 1, -1, False)],   # Down
+        2: [(1.0, 0, -1, False)],   # Left
+        3: [(1.0, 3, 100, True)]    # Right
+    },
+
+    # ---------------- State 2 : Obstacle ----------------
+    2: {
+        0: [(1.0, 2, -50, False)],  # Up
+        1: [(1.0, 1, -1, False)],   # Down
+        2: [(1.0, 2, -50, False)],  # Left
+        3: [(1.0, 2, -50, False)]   # Right
+    },
+
+    # ---------------- State 3 : Goal (Terminal) ----------------
+    3: {
+        0: [(1.0, 3, 0, True)],     # Up
+        1: [(1.0, 3, 0, True)],     # Down
+        2: [(1.0, 3, 0, True)],     # Left
+        3: [(1.0, 3, 0, True)]      # Right
+    }
+}
+
+# ---------------------------------------------
+# Display State Space
+# ---------------------------------------------
+print("\nSTATE SPACE")
+for s in states:
+    print(f"{s} : {states[s]}")
+
+# ---------------------------------------------
+# Display Action Space
+# ---------------------------------------------
+print("\nACTION SPACE")
+for a in actions:
+    print(f"{a} : {actions[a]}")
+
+# ---------------------------------------------
+# Display Transition Function
+# ---------------------------------------------
+print("\nTRANSITION FUNCTION (P)")
+
+for state in P:
+    print(f"\nState {state} ({states[state]})")
+
+    for action in P[state]:
+
+        print(f"  Action {action} ({actions[action]})")
+
+        for probability, next_state, reward, terminated in P[state][action]:
+
+            print(
+                f"     -> Probability : {probability}"
+                f"\n        Next State : {next_state} ({states[next_state]})"
+                f"\n        Reward     : {reward}"
+                f"\n        Terminated : {terminated}\n"
+            )
+
+# ---------------------------------------------
+# Discount Factor
+# ---------------------------------------------
+print("Discount Factor (γ):", gamma)
 
 ```
 ---
 ## Output
 
-Write your Python output here.
+Name: Santhose Arockiaraj
+Register Number: 212224230248
+
+STATE SPACE
+0 : Start
+1 : Empty Cell
+2 : Obstacle
+3 : Goal
+
+ACTION SPACE
+0 : Up
+1 : Down
+2 : Left
+3 : Right
+
+TRANSITION FUNCTION (P)
+
+State 0 (Start)
+  Action 0 (Up)
+     -> Probability : 1.0
+        Next State : 0 (Start)
+        Reward     : -1
+        Terminated : False
+
+  Action 1 (Down)
+     -> Probability : 1.0
+        Next State : 1 (Empty Cell)
+        Reward     : -1
+        Terminated : False
+
+  Action 2 (Left)
+     -> Probability : 1.0
+        Next State : 0 (Start)
+        Reward     : -1
+        Terminated : False
+
+  Action 3 (Right)
+     -> Probability : 1.0
+        Next State : 1 (Empty Cell)
+        Reward     : -1
+        Terminated : False
 
 
+State 1 (Empty Cell)
+  Action 0 (Up)
+     -> Probability : 1.0
+        Next State : 2 (Obstacle)
+        Reward     : -50
+        Terminated : False
+
+  Action 1 (Down)
+     -> Probability : 1.0
+        Next State : 1 (Empty Cell)
+        Reward     : -1
+        Terminated : False
+
+  Action 2 (Left)
+     -> Probability : 1.0
+        Next State : 0 (Start)
+        Reward     : -1
+        Terminated : False
+
+  Action 3 (Right)
+     -> Probability : 1.0
+        Next State : 3 (Goal)
+        Reward     : 100
+        Terminated : True
+
+
+State 2 (Obstacle)
+  Action 0 (Up)
+     -> Probability : 1.0
+        Next State : 2 (Obstacle)
+        Reward     : -50
+        Terminated : False
+
+  Action 1 (Down)
+     -> Probability : 1.0
+        Next State : 1 (Empty Cell)
+        Reward     : -1
+        Terminated : False
+
+  Action 2 (Left)
+     -> Probability : 1.0
+        Next State : 2 (Obstacle)
+        Reward     : -50
+        Terminated : False
+
+  Action 3 (Right)
+     -> Probability : 1.0
+        Next State : 2 (Obstacle)
+        Reward     : -50
+        Terminated : False
+
+
+State 3 (Goal)
+  Action 0 (Up)
+     -> Probability : 1.0
+        Next State : 3 (Goal)
+        Reward     : 0
+        Terminated : True
+
+  Action 1 (Down)
+     -> Probability : 1.0
+        Next State : 3 (Goal)
+        Reward     : 0
+        Terminated : True
+
+  Action 2 (Left)
+     -> Probability : 1.0
+        Next State : 3 (Goal)
+        Reward     : 0
+        Terminated : True
+
+  Action 3 (Right)
+     -> Probability : 1.0
+        Next State : 3 (Goal)
+        Reward     : 0
+        Terminated : True
+
+Discount Factor (γ): 0.9
 ---
 
 ## Result
 
-Write your result here.
-
+The real-world warehouse robot navigation problem was successfully represented as a Markov Decision Process by defining the state space, action space, transition probabilities, reward function, and implementing the MDP using Python. This representation can be used as the foundation for reinforcement learning algorithms such as Value Iteration, Policy Iteration, and Q-Learning.
 
 
 ---
